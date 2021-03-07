@@ -48,7 +48,7 @@ public class ThreadController {
         CompletableFuture<String> ref1 = CompletableFuture.supplyAsync(() -> {
             try {
                 logger.info(Thread.currentThread().getName() + " supplyAsync开始执行任务1.... ");
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(10);
             } catch (Exception e) {
                 logger.error("CompletableFuture exception,", e);
             }
