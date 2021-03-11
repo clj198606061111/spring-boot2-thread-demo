@@ -60,4 +60,25 @@ public class ThreadController {
         //ref1.cancel(true);
         return true;
     }
+
+    @RequestMapping("/thd3")
+    public boolean thd3() throws InterruptedException {
+        ExecutorService pool = Executors.newSingleThreadExecutor();
+        CompletableFuture<String> ref1 = CompletableFuture.supplyAsync(() -> {
+            try {
+                logger.info(Thread.currentThread().getName() + " supplyAsync开始执行任务3.... ");
+                TimeUnit.SECONDS.sleep(2);
+            } catch (Exception e) {
+                logger.error("CompletableFuture exception,", e);
+            }
+            logger.info(Thread.currentThread().getName() + " supplyAsync: 任务3");
+            return null;
+        }, pool);
+
+        ref1.thenRunAsync(new MyRunnable(12, ref1), pool);
+        //结束子线程,如果子线程已经启动，则不能结束
+        Thread.sleep(2000);
+        ref1.cancel(true);
+        return true;
+    }
 }
