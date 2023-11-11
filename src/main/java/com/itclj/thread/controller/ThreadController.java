@@ -1,11 +1,13 @@
 package com.itclj.thread.controller;
 
+import com.itclj.thread.service.ThreadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -17,6 +19,9 @@ public class ThreadController {
     private Logger logger = LoggerFactory.getLogger(ThreadController.class);
 
     private Map<Integer, Future> threadMap = new HashMap<>();
+
+    @Resource
+    ThreadService threadService;
 
     @RequestMapping("/thd")
     public boolean thd() {
@@ -88,10 +93,10 @@ public class ThreadController {
      * 最近项目上遇到个问题，采用多线程处理的时候发现子线程内部处理不够快，主线程生产子线程需要处理的批次数据，
      * 主线程生产数据快，导致主线程产生的数据得不到子线程及时处理，内存快速被撑爆，触发fullgc，又导致大量cpu被用于处理gc，
      * 子线程处理起来更慢了，原来1秒处理一批次，到后来10分钟处理一批次。
-     *
+     * <p>
      * 写个测试代码复现一下，顺便也验证一下子线程处理完成后，被子线程占有的需要处理的数据对象会自动被jvm垃圾收集器 自动回收，
      * 内存不会持续暴涨。
-     *
+     * <p>
      * http://127.0.0.1:8080/itclj/thd4
      *
      * @return
@@ -99,6 +104,6 @@ public class ThreadController {
     @GetMapping("/thd4")
     public boolean thd4() {
         logger.info("thd4");
-        return true;
+        return threadService.thd4();
     }
 }
